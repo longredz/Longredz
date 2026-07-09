@@ -1,4 +1,4 @@
--- [[ Blox Fruits Rainbow Menu - Ban Offline v6.3 - 800+ Du Lieu + AI Fuzzy Match ]] --
+-- [[ Blox Fruits Rainbow Menu - Ban Offline v6.2 - 800+ Du Lieu + AI Fuzzy Match ]] --
 
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
@@ -80,7 +80,7 @@ end
 local Title = Instance.new("TextLabel")
 Title.Size = UDim2.new(0, 400, 0, 40)
 Title.Position = UDim2.new(0, 20, 0, 10)
-Title.Text = "GEMINI OFFLINE CORE v6.3"
+Title.Text = "GEMINI OFFLINE CORE v6.2"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.TextSize = 15
 Title.Font = Enum.Font.GothamBold
@@ -289,7 +289,7 @@ local function addMessage(senderName, text, color)
     return MsgFrame
 end
 
-addMessage("He Thong", "Da kich hoat che do Offline Sieu Toc ban v6.3 voi hon 800 to hop du lieu Blox Fruits. Ho tro ca tieng Viet va tieng Anh (EN/VI), tu dong nhan biet ngon ngu ban dang go! Hoi thoai mai nhe, hoac go 'help' / 'huong dan' de xem vi du. 🥳", Color3.fromRGB(0, 200, 120))
+addMessage("He Thong", "Da kich hoat che do Offline Sieu Toc ban v6.2 voi hon 800 to hop du lieu Blox Fruits (trai, dao, boss, vu khi, fighting style) + AI do loi go. Hoi thoai mai nhe, hoac go 'so sanh dragon va kitsune' hay 'danh sach trai'! 🥳", Color3.fromRGB(0, 200, 120))
 
 local VN_MAP = {
     ["à"]="a",["á"]="a",["ả"]="a",["ã"]="a",["ạ"]="a",["ă"]="a",["ằ"]="a",["ắ"]="a",["ẳ"]="a",["ẵ"]="a",["ặ"]="a",
@@ -353,33 +353,6 @@ local function tokenize(text)
         if #w >= 2 then words[#words+1] = w end
     end
     return words
-end
-
--- Tu dong nhan biet nguoi choi dang nhan tin bang tieng Anh hay tieng Viet
-local VN_HINT_WORDS = {
-    " la gi"," khong"," gi ", " cua "," va "," voi "," nao"," the nao"," o dau",
-    " manh"," yeu"," gia"," danh sach"," so sanh"," bao nhieu"," duoc khong",
-}
-local EN_HINT_WORDS = {
-    "what is","what's","how ","where ","is it","are you","which ","best ",
-    "worst ","strong","weak","compare","list ","help","good","tier","worth",
-    "please","fruit","island","boss","weapon","style","awaken","location",
-}
-local function detectLanguage(rawText, normalizedText)
-    -- Dau tieng Viet co dau la tin hieu chac chan nhat
-    for ch in string.gmatch(rawText, utf8.charpattern) do
-        if VN_MAP[ch] then return "vi" end
-    end
-    local vnScore, enScore = 0, 0
-    for _, w in ipairs(VN_HINT_WORDS) do
-        if string.find(normalizedText, w, 1, true) then vnScore = vnScore + 1 end
-    end
-    local lowerRaw = " " .. string.lower(rawText) .. " "
-    for _, w in ipairs(EN_HINT_WORDS) do
-        if string.find(lowerRaw, w, 1, true) then enScore = enScore + 1 end
-    end
-    if enScore > vnScore then return "en" end
-    return "vi"
 end
 
 local function anyMatch(text, keywords)
@@ -581,168 +554,7 @@ local FIGHTING_STYLES_RAW = {
     {"superman_run","Superhuman Sprint","Ky nang chay/lao nhanh giup rut ngan khoang cach voi doi thu hoac muc tieu farm.","superhuman sprint|chay nhanh"},
 }
 
--- ================= ENGLISH NOTES (short summaries, one per entry id) =================
-local EN_FRUIT_NOTES = {
-    dragon="Very mobile, wide AoE damage, one of the strongest and most expensive fruits.",
-    kitsune="Fast transformation, strong AoE combos, top-tier for bossing and PvP.",
-    leopard="Fastest transformation in the game, wide combo range, great for grinding.",
-    mammoth="Strong melee with wide crowd control, very well-rounded.",
-    buddha="Huge attack range when giant-formed and reduced damage taken, easiest fruit to grind with.",
-    dough="After awakening (V2), extremely strong crowd-control combos in PvP.",
-    portal="Instant teleport skills for dodging and starting combos, top of current PvP meta.",
-    venom="Damage-over-time poison, hard to deal with in close quarters.",
-    trex="Strong melee damage, a good alternative to Kitsune.",
-    magma="High damage after awakening, best for hunting dangerous sea beasts.",
-    gas="Wide crowd control but hard to land on skilled players.",
-    tiger="Reworked and stronger than its old version (Leopard), currently top tier.",
-    yeti="Strong ice melee, has a rare Fiend variant that's even stronger.",
-    lightning="Formerly Rumble. High attack speed and mobility with wide stuns.",
-    control="Strong crowd control, requires high skill to land hits.",
-    quake="Wide knockback, good for grouping mobs and grinding.",
-    string="Great combo extension for melee playstyles.",
-    creation="Reworked Barrier, stable in fights with solid defense.",
-    spirit="High damage, flexible combos, pairs well with melee fighting styles.",
-    sound="Great mobility and pressure in PvP thanks to fast attacks.",
-    ice="Decent damage, ice-skate mobility skill, beginner friendly.",
-    light="Fastest flight in the game, great for First Sea and long travel.",
-    phoenix="Self-healing, high durability, less downtime while grinding.",
-    blizzard="Solid freeze crowd-control in combos.",
-    spider="Trap-based skills, good combos when used correctly.",
-    soul="Unpredictable combos, often used as a secondary fruit to break stances.",
-    shadow="Good mobility, suits group play and dodging.",
-    gravity="Decent pull/lock skills, often used to lock combos.",
-    rubber="Weak damage, easy to counter compared to newer fruits.",
-    sand="Was strong before, now weak after nerfs.",
-    spike="Very low damage, mostly for fun or nostalgia.",
-    chop="Only effective vs sword users, otherwise weak.",
-    bomb="Low damage, rarely used late game.",
-    spin="Barely effective nowadays.",
-    rocket="Mostly used for early mobility, very low damage.",
-    spring="High jump utility, almost no combat value.",
-    dark="Was strong before, playstyle a bit outdated now.",
-    flame="Decent damage for early-mid game, easy to pick up.",
-    eagle="Formerly Falcon, reworked with new moves, now much more mobile and useful.",
-    fiend="Rare Yeti variant, top S-tier as soon as it releases, harder to obtain.",
-    diamond="Very high defense from diamond armor, moderate damage, tanky playstyle.",
-    smoke="Stun and vision-blocking skills, good combo opener, can fly slowly.",
-    pain="Formerly Paw. Has a 'Last Stand' revive mechanic when low HP.",
-    love="Confusion/CC skills (Cupid's Zone, Heart Shot...), more support than raw damage.",
-    ghost="Temporary invisibility and fear-based stuns, sneaky combo starter.",
-    revive="Team-support utility to revive fallen allies in certain modes.",
-    blade="Summons flying blades around you, good damage with sword builds.",
-}
-local EN_ROLE_MAP = {
-    ["cả PvP lẫn PvE"]="both PvP and PvE", ["ca PvP lan PvE"]="both PvP and PvE",
-    ["PvP"]="PvP", ["PvE"]="PvE", ["PvE (farm)"]="PvE grinding", ["PvE (cày cấp)"]="PvE leveling",
-    ["PvE (cay cap)"]="PvE leveling", ["PvE (săn quái biển)"]="hunting sea beasts",
-    ["PvE (san quai bien)"]="hunting sea beasts", ["di chuyển nhanh"]="fast travel",
-    ["di chuyen nhanh"]="fast travel", ["PvP (rủi ro cao, phần thưởng cao)"]="high-risk high-reward PvP",
-    ["PvP (rui ro cao, phan thuong cao)"]="high-risk high-reward PvP",
-    ["PvP (gây rối)"]="PvP disruption", ["PvP (gay roi)"]="PvP disruption",
-    ["PvE (phòng thủ)"]="tanky PvE", ["PvE (phong thu)"]="tanky PvE",
-    ["cheo va kho chiu trong PvP"]="sneaky, annoying in PvP", ["ho tro dong doi"]="team support",
-    ["can chien voi kiem"]="sword melee", ["di chuyen"]="mobility/travel",
-    ["di chuyen + PvE"]="mobility and PvE",
-}
-
-local EN_ISLAND_NOTES = {
-    pirate_starter="Pirate faction starting island with basic skill trainers.",
-    marine_starter="Marine faction starting island, good for early quests.",
-    middle_town="Home of the Blox Fruit Dealer, main trading hub.",
-    jungle="Weak mobs suited for very early grinding.",
-    pirate_village="Early-game grinding and quest area.",
-    desert="Large terrain, decent for early-mid mobs.",
-    frozen_village="Icy area with early-mid level mobs.",
-    marine_fortress="Marine base guarded by many soldiers.",
-    skylands="Aerial area, needs flight skill or fruit.",
-    prison="Prison island with a story-related quest chain.",
-    colosseum="Small PvE/PvP arena battles.",
-    magma_village="Volcanic area with fire-damage mobs.",
-    underwater_city="Underwater city with special quests and NPCs.",
-    fountain_city="End of First Sea, higher level mobs.",
-    upper_skylands="Higher continuation of Skylands with stronger mobs.",
-    kingdom_of_rose="Opens Second Sea with a big story questline.",
-    green_zone="Mid-level Second Sea grinding area.",
-    graveyard="Dark-themed island with shadow mobs.",
-    dark_arena="Arena with strong dark-element mobs and bosses.",
-    snow_mountain="Snowy area guarded by boss Chief Summit.",
-    cursed_ship="Cursed ship with high-level ghost mobs and Cursed Captain.",
-    forgotten_island="Hidden island with strong mobs and rare drops.",
-    hot_and_cold="Special island combining volcanic and icy terrain.",
-    ice_castle="Ice castle, home of the Thunder God NPC tied to Lightning.",
-    remote_island="Quiet, out-of-the-way grinding spot.",
-    port_town="Third Sea starting town, Fruit Dealer spawns here.",
-    hydra_island="Island with high-level multi-headed serpent mobs.",
-    great_tree="Giant tree area with a special quest.",
-    floating_turtle="Special island on the back of a giant turtle.",
-    haunted_castle="Haunted castle with ghost mobs and a high-level Third Sea boss.",
-    castle_on_the_sea="Floating fortress with a pirate-defense event for fruit chances.",
-    sea_of_treats="Candy-themed area tied to the Dough raid storyline.",
-    tiki_outpost="Hideout of boss Tyrant of the Skies, drops Eagle fruit rarely.",
-}
-
-local EN_BOSS_NOTES = {
-    dough_king="Holds the key to the Dough raid, bring high HP and dodge well.",
-    don_swan="Uses Spider fruit with an upgraded moveset.",
-    saber_expert="Strong swordsman boss found in Second Sea.",
-    cake_prince="Third Sea boss with wide-area attacks.",
-    tide_keeper="Third Sea boss with high water-based damage.",
-    chief_summit="Guards the snow mountain area in Second Sea.",
-    fajita="Important NPC/boss tied to the V4 race storyline.",
-    diamond_boss="Uses the Diamond fruit, very high defense.",
-    smoke_boss="First Sea boss using the Smoke fruit.",
-    swan_pirates="Pirate crew guarding Kingdom of Rose.",
-    tyrant_of_skies="Rare flying boss, small chance to drop Eagle fruit.",
-    leviathan="Giant sea monster in Sea 3, fight with a group.",
-    terrorshark="Giant shark found in dangerous waters.",
-    grand_brigade="Pirate crew in Ship Raid, random fruit drop chance.",
-    factory_boss="Deal the most damage in the raid to earn a fruit reward.",
-    death_king="Halloween event boss, chance to drop a rare physical fruit.",
-    nautical_captain="Strong melee boss in Third Sea.",
-    midnight_general="Dark Arena boss with strong shadow skills.",
-    swordsman_of_rose="Swordsman boss guarding inner Kingdom of Rose.",
-    cursed_captain="Cursed Ship's captain, high damage with close-range CC.",
-    agony_boss="First boss using the reworked Pain fruit, can revive via 'Last Stand'.",
-}
-
-local EN_WEAPON_NOTES = {
-    tushita="Popular legendary sword, good damage and reach for sword builds.",
-    saddi="Strong sword-build weapon, needs precise combo execution.",
-    yama="Famous three-blade weapon with high combo damage.",
-    shark_saw="Good fit for melee/gun hybrid builds.",
-    soul_cane="Great support weapon for long combo chains.",
-    dark_blade="Rare sword with a signature dark effect.",
-    cursed_dual_katana="Dual katana with very fast attack speed.",
-    pole_v2="Strong awakened weapon for Superhuman builds.",
-    rengoku="Powerful fire-damage weapon for advanced sword builds.",
-    dragon_trident="Trident suited for mid-range combat.",
-    chaser="Good target-tracking weapon in PvP.",
-    hallow_scythe="Scythe with a signature wide-area effect.",
-    acidum_rifle="Gun that deals acid damage over time.",
-    serpent_bow="Long-range bow for keep-away playstyles.",
-    falcon_gun="Fast-firing gun, good for gun builds.",
-    true_triple_katana="Upgraded Triple Katana, higher damage and swing speed.",
-    buddy_sword="Common early sword, fast but low damage.",
-    combat_knife="Very fast dagger, good for opening combos.",
-    cutlass="Classic starter sword, usually temporary early gear.",
-    bisento="Wide-reach weapon, good for hitting multiple targets.",
-    iron_mace="Mace with strong stun, good for interrupting combos.",
-    death_scythe="Reaper scythe with a signature look and steady damage.",
-    ice_blade="Ice sword that can slow enemies on hit.",
-}
-
-local EN_STYLE_NOTES = {
-    superhuman="Basic fighting style, easy to level early, simple bare-hand combos.",
-    electric_claw="Very fast attacks with an electric shock effect, great for chain combos.",
-    dragon_talon="Strong combo chains, simple yet effective melee playstyle.",
-    sharkman_karate="Bonus damage underwater, great for players who fight at sea.",
-    death_step="Powerful dodge/teleport skill, almost required to avoid AoE boss attacks.",
-    godhuman="Final fighting style, high damage and flexible combos, late-game standard.",
-    dragon_claw="Upgraded Dragon Talon with better range and combo damage.",
-    cyborg="Cyborg transformation boosts stats briefly, good for farming and PvP.",
-    superman_run="Sprint/dash skill to quickly close distance to a target.",
-}
-
+local ENTRY_DB = {}
 local ENTRY_INDEX = {}
 local ALL_ALIAS_TOKENS = {}
 
@@ -783,7 +595,7 @@ local function buildFruitEntry(row)
         { patterns = {"build gi","ket hop","fighting style nao","di chung voi gi"},
           build = function() return string.format("<b>[%s - GOI Y BUILD]:</b> Nen ket hop cung mot fighting style can chien manh (nhu Electric Claw, Sharkman Karate hoac Godhuman) cung vu khi co combo tot de toi uu sat thuong lien hoan. %s", name, emo("hype")) end },
     }
-    registerEntry({ id = id, aliases = aliases, templates = templates, kind = "fruit", subkind = kind, tier = tier, role = role, note = note, name = name, en_note = EN_FRUIT_NOTES[id], en_role = EN_ROLE_MAP[role] or role })
+    registerEntry({ id = id, aliases = aliases, templates = templates, kind = "fruit", tier = tier, role = role, note = note, name = name })
 end
 for _, row in ipairs(FRUITS_RAW) do buildFruitEntry(row) end
 
@@ -800,7 +612,7 @@ local function buildIslandEntry(row)
         { patterns = {"co boss khong","boss gi","co quest khong"},
           build = function() return string.format("<b>[%s - BOSS/QUEST]:</b> Nhieu dao trong %s co NPC hoac boss rieng gan voi cot truyen. Hoi minh ten boss cu the de biet them chi tiet nhe! %s", name, sea, emo("hype")) end },
     }
-    registerEntry({ id = id, aliases = aliases, templates = templates, kind = "island", name = name, sea = sea, en_note = EN_ISLAND_NOTES[id] })
+    registerEntry({ id = id, aliases = aliases, templates = templates, kind = "island", name = name })
 end
 for _, row in ipairs(ISLANDS_RAW) do buildIslandEntry(row) end
 
@@ -817,7 +629,7 @@ local function buildBossEntry(row)
         { patterns = {"manh khong","kho khong","de danh khong"},
           build = function() return string.format("<b>[%s - DO KHO]:</b> %s Khong nen danh solo neu level con thap. %s", name, note, emo("funny")) end },
     }
-    registerEntry({ id = id, aliases = aliases, templates = templates, kind = "boss", name = name, en_note = EN_BOSS_NOTES[id] })
+    registerEntry({ id = id, aliases = aliases, templates = templates, kind = "boss", name = name })
 end
 for _, row in ipairs(BOSSES_RAW) do buildBossEntry(row) end
 
@@ -832,7 +644,7 @@ local function buildWeaponEntry(row)
         { patterns = {"gia bao nhieu","dat khong"},
           build = function() return string.format("<b>[%s - GIA]:</b> Gia tri tren thi truong trade bien dong kha nhieu, nen tham khao cong dong truoc khi mua ban. %s", name, emo("neutral")) end },
     }
-    registerEntry({ id = id, aliases = aliases, templates = templates, kind = "weapon", name = name, en_note = EN_WEAPON_NOTES[id] })
+    registerEntry({ id = id, aliases = aliases, templates = templates, kind = "weapon", name = name })
 end
 for _, row in ipairs(WEAPONS_RAW) do buildWeaponEntry(row) end
 
@@ -847,7 +659,7 @@ local function buildFightingStyleEntry(row)
         { patterns = {"combo the nao","danh the nao","ket hop gi"},
           build = function() return string.format("<b>[%s - COMBO]:</b> Nen luyen tap thu tu don co ban truoc, sau do ket hop voi mot vu khi hoac trai co dong de noi combo muot hon. %s", name, emo("neutral")) end },
     }
-    registerEntry({ id = id, aliases = aliases, templates = templates, kind = "style", name = name, en_note = EN_STYLE_NOTES[id] })
+    registerEntry({ id = id, aliases = aliases, templates = templates, kind = "style", name = name })
 end
 for _, row in ipairs(FIGHTING_STYLES_RAW) do buildFightingStyleEntry(row) end
 
@@ -913,12 +725,12 @@ local function findFruitIdInText(text)
     return bestId
 end
 
-local function tryCompare(text, lang)
-    if not (string.find(text, "so sanh", 1, true) or string.find(text, " vs ", 1, true) or string.find(text, "hay hon", 1, true) or string.find(text, "compare", 1, true)) then
+local function tryCompare(text)
+    if not (string.find(text, "so sanh", 1, true) or string.find(text, " vs ", 1, true) or string.find(text, "hay hon", 1, true)) then
         return nil
     end
     local firstHalf, secondHalf = text, text
-    local splitPos = string.find(text, " va ") or string.find(text, " vs ") or string.find(text, " hay ") or string.find(text, " and ")
+    local splitPos = string.find(text, " va ") or string.find(text, " vs ") or string.find(text, " hay ")
     if splitPos then
         firstHalf = string.sub(text, 1, splitPos)
         secondHalf = string.sub(text, splitPos)
@@ -927,17 +739,7 @@ local function tryCompare(text, lang)
     local idB = findFruitIdInText(secondHalf)
     if idA and idB and idA ~= idB then
         local rowA, rowB = findFruitRowById(idA), findFruitRowById(idB)
-        local entryA, entryB = ENTRY_INDEX[idA], ENTRY_INDEX[idB]
         if rowA and rowB then
-            if lang == "en" then
-                return string.format(
-                    "<b>[COMPARE %s vs %s]:</b>\n• %s: %s tier, best for %s. %s\n• %s: %s tier, best for %s. %s\n=> Both are strong in their own way, pick based on whether you prioritize PvP or PvE! %s",
-                    rowA[2], rowB[2],
-                    rowA[2], rowA[4], entryA.en_role or rowA[5], entryA.en_note or "",
-                    rowB[2], rowB[4], entryB.en_role or rowB[5], entryB.en_note or "",
-                    emo("hype")
-                )
-            end
             return string.format(
                 "<b>[SO SANH %s vs %s]:</b>\n• %s: %s tier, phu hop %s. %s\n• %s: %s tier, phu hop %s. %s\n=> Ca hai deu manh theo cach rieng, chon tuy theo ban uu tien PvP hay PvE nhe! %s",
                 rowA[2], rowB[2],
@@ -1011,63 +813,21 @@ local function resolveTemplate(entry, text)
     return entry.templates[1]
 end
 
--- ================= ENGLISH ANSWERS =================
-local EN_TOPIC_ANSWERS = {
-    greeting = "Hi there! I'm an offline assistant with 800+ Blox Fruits data points 🥰 Ask me about fruits, islands, bosses, weapons, fighting styles, codes, or try 'compare dragon and kitsune'!",
-    thanks = "You're welcome! Happy grinding! 🥰 Feel free to ask me anything else.",
-    help = "<b>[QUICK HELP]:</b> You can chat naturally in English or Vietnamese, for example:\n• 'is buddha good', 'what to build with kitsune'\n• 'compare dragon and kitsune'\n• 'tushita vs saddi which is better'\n• 'list fruits / islands / bosses / weapons / fighting styles'\n• 'v4 race', 'codes', 'rip indra'\nJust type naturally, I'll do my best to understand! 🥳",
-    v4 = "<b>[V4 RACE GUIDE]:</b> Requires max level, defeating boss Rip_Indra, and completing the Trial at the Temple of Time. Ask 'where' or 'reward' for more detail!",
-    rip_indra = "<b>[BOSS RIP_INDRA]:</b> High-level boss required to unlock the V4 race, has a wide lightning AoE attack. Bring high HP and dodge based on the warning indicator.",
-    code = "<b>[X2 EXP CODES]:</b> Codes change and expire often, check the game's official announcement channel or Discord for the newest valid codes instead of using old expired ones.",
-    sea_event = "<b>[SEA BOSSES]:</b> Sail to level 5-6 danger zones in Sea 3 at night to hunt Terrorshark or find Leviathan. Go with a group, their HP is very high.",
-    tier_list = "<b>[OVERALL TIER LIST 2026]:</b> Current top tier (T0/S) usually includes Portal, Kitsune, Dragon, Buddha, with Leopard, Mammoth, Tiger, Yeti, Fiend right behind. Ask about a specific fruit or 'compare X and Y' for more!",
-    reroll = "<b>[FRUIT REROLL]:</b> Use the Trader NPC near the main hub to reroll your devil fruit, usually costs in-game money or Fragments depending on the fruit.",
-}
-
-local function buildEnglishAnswer(entry)
-    if entry.kind == "topic" then
-        return EN_TOPIC_ANSWERS[entry.id] or string.format("<b>[%s]:</b> English detail coming soon, try asking in Vietnamese for the full detail! %s", entry.name, emo("cute"))
-    elseif entry.kind == "fruit" then
-        return string.format("<b>[%s]:</b> %s tier %s-type fruit. Best for %s. %s %s",
-            entry.name, entry.tier, entry.subkind or "?", entry.en_role or entry.role,
-            entry.en_note or "No detailed English info yet, ask in Vietnamese for more.", emo(tierMood(entry.tier)))
-    elseif entry.kind == "island" then
-        return string.format("<b>[%s]:</b> Located in %s. %s %s",
-            entry.name, entry.sea or "?", entry.en_note or "More detail coming soon.", emo("cute"))
-    else
-        local label = (entry.kind == "boss" and "BOSS") or (entry.kind == "weapon" and "WEAPON") or "FIGHTING STYLE"
-        return string.format("<b>[%s - %s]:</b> %s %s",
-            entry.name, label, entry.en_note or "More detail coming soon, ask in Vietnamese for full info.", emo("neutral"))
-    end
-end
-
-local EN_LIST_HEADERS = {
-    ["DANH SACH TRAI"]="FRUIT LIST", ["DANH SACH DAO"]="ISLAND LIST",
-    ["DANH SACH BOSS"]="BOSS LIST", ["DANH SACH VU KHI"]="WEAPON LIST",
-    ["DANH SACH FIGHTING STYLE"]="FIGHTING STYLE LIST",
-}
-
 local function processOmniIntelligence(prompt)
     local text = normalize(prompt)
-    local lang = detectLanguage(prompt, text)
 
-    local compareResult = tryCompare(text, lang)
+    local compareResult = tryCompare(text)
     if compareResult then
         currentContext = nil
         return compareResult
     end
 
     if string.find(text, "danh sach", 1, true) or string.find(text, "list ", 1, true) then
-        local header, rawList = nil, nil
-        if anyMatch(text, {"trai","fruit"}) then header, rawList = "DANH SACH TRAI", FRUITS_RAW end
-        if anyMatch(text, {"dao","island"}) then header, rawList = "DANH SACH DAO", ISLANDS_RAW end
-        if anyMatch(text, {"boss"}) then header, rawList = "DANH SACH BOSS", BOSSES_RAW end
-        if anyMatch(text, {"vu khi","weapon"}) then header, rawList = "DANH SACH VU KHI", WEAPONS_RAW end
-        if anyMatch(text, {"fighting style","phong cach","style"}) then header, rawList = "DANH SACH FIGHTING STYLE", FIGHTING_STYLES_RAW end
-        if header then
-            local finalHeader = (lang == "en") and (EN_LIST_HEADERS[header] or header) or header
-            return buildListText(rawList, finalHeader)
-        end
+        if anyMatch(text, {"trai","fruit"}) then return buildListText(FRUITS_RAW, "DANH SACH TRAI") end
+        if anyMatch(text, {"dao","island"}) then return buildListText(ISLANDS_RAW, "DANH SACH DAO") end
+        if anyMatch(text, {"boss"}) then return buildListText(BOSSES_RAW, "DANH SACH BOSS") end
+        if anyMatch(text, {"vu khi","weapon"}) then return buildListText(WEAPONS_RAW, "DANH SACH VU KHI") end
+        if anyMatch(text, {"fighting style","phong cach","style"}) then return buildListText(FIGHTING_STYLES_RAW, "DANH SACH FIGHTING STYLE") end
     end
 
     -- Cau hoi kieu "cao cap": nhac toi nhieu chu de cung luc (2-4 muc) ma
@@ -1076,7 +836,7 @@ local function processOmniIntelligence(prompt)
     if #multi >= 2 and #multi <= 4 then
         local parts = {}
         for _, e in ipairs(multi) do
-            parts[#parts+1] = (lang == "en") and buildEnglishAnswer(e) or resolveTemplate(e, text).build()
+            parts[#parts+1] = resolveTemplate(e, text).build()
         end
         currentContext = multi[#multi].id
         return table.concat(parts, "\n\n")
@@ -1095,17 +855,11 @@ local function processOmniIntelligence(prompt)
 
     if activeEntry then
         currentContext = activeEntry.id
-        if lang == "en" then
-            return buildEnglishAnswer(activeEntry)
-        end
         local tmpl = resolveTemplate(activeEntry, text)
         return tmpl.build()
     end
 
     currentContext = nil
-    if lang == "en" then
-        return "<b>[RESULT]:</b> I didn't catch that 😭 Try typing a fruit name (e.g. 'buddha'), an island, a boss, a weapon, a fighting style (e.g. 'godhuman'), 'v4 race', 'codes', 'list fruits', 'compare dragon and kitsune', or type 'help' to see how to ask!"
-    end
     return "<b>[KET QUA]:</b> Toi chua hieu tu khoa nay 😭 Thu go ten mot trai (vd 'buddha'), mot dao, mot boss, mot vu khi, mot fighting style (vd 'godhuman'), 'toc v4', 'code', 'danh sach trai', 'so sanh dragon va kitsune', hoac go 'huong dan' de xem cach hoi nhe!"
 end
 
